@@ -64,6 +64,4 @@ WORKDIR /var/www
 
 RUN rm -rf /var/www/html
 
-CMD ["chown", "www-data:www-data", "-R", "/var/www"]
-CMD ["chmod", "755", "/var/www"]
 ENTRYPOINT ["/root/docker-entrypoint.sh"]
