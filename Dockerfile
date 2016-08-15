@@ -36,7 +36,7 @@ RUN sed -i 's/^ *;\? *date.timezone *=.*$/date.timezone = UTC/g' /etc/php/7.0/cl
 RUN sed -i "s/^ *variables_order *= *\"GPCS\" *$/variables_order = \"EGPCS\"/" /etc/php/7.0/cli/php.ini
 RUN sed -i 's/^ *;\? *date.timezone *=.*$/date.timezone = UTC/g' /etc/php/7.0/fpm/php.ini
 RUN sed -i "s/^ *variables_order *= *\"GPCS\" *$/variables_order = \"EGPCS\"/" /etc/php/7.0/fpm/php.ini
-#RUN sed -i "s/^;chdir =.*$/chdir = \//g" /etc/php/7.0/fpm/pool.d/www.conf
+RUN sed -Ei "s/^ *;?listen.mode *=.*$/listen.mode = 0664/" /etc/php/7.0/fpm/pool.d/www.conf
 
 RUN mkdir -p /run/php
 
@@ -46,6 +46,9 @@ RUN mv composer.phar /usr/local/bin/composer
 
 #CONFIG NGINX
 ADD config/laravel /etc/nginx/sites-available/laravel
+
+RUN sed -i "s/^\( *\)worker_connections \+[0-9]\+; *$/\1worker_connections 1024;/" /etc/nginx/nginx.conf
+RUN sed -i "s/^\( *\)keepalive_timeout \+[0-9]\+; *$/\1keepalive_timeout 1200;/" /etc/nginx/nginx.conf
 
 RUN ln -s /etc/nginx/sites-available/laravel /etc/nginx/sites-enabled/laravel \
     && rm /etc/nginx/sites-enabled/default
