@@ -46,8 +46,12 @@ RUN mv /etc/locale.gen /etc/locale.gen.bkp \
 RUN sed -i 's/^max_execution_time *= *.*$/max_execution_time = 0/g' /etc/php/7.0/cli/php.ini
 RUN sed -i 's/^ *;\? *date.timezone *=.*$/date.timezone = UTC/g' /etc/php/7.0/cli/php.ini
 RUN sed -i "s/^ *variables_order *= *\"GPCS\" *$/variables_order = \"EGPCS\"/" /etc/php/7.0/cli/php.ini
+RUN sed -i "s/^ *memory_limit *= *[0-9]\+M *$/memory_limit = 512M/" /etc/php/7.0/cli/php.ini
+RUN sed -i "s/^ *post_max_size *= *[0-9]\+M *$/post_max_size = 50M/" /etc/php/7.0/cli/php.ini
 RUN sed -i 's/^ *;\? *date.timezone *=.*$/date.timezone = UTC/g' /etc/php/7.0/fpm/php.ini
 RUN sed -i "s/^ *variables_order *= *\"GPCS\" *$/variables_order = \"EGPCS\"/" /etc/php/7.0/fpm/php.ini
+RUN sed -i "s/^ *memory_limit *= *[0-9]\+M *$/memory_limit = 512M/" /etc/php/7.0/fpm/php.ini
+RUN sed -i "s/^ *post_max_size *= *[0-9]\+M *$/post_max_size = 50M/" /etc/php/7.0/fpm/php.ini
 RUN sed -Ei "s/^ *;?listen.mode *=.*$/listen.mode = 0664/" /etc/php/7.0/fpm/pool.d/www.conf
 RUN mkdir -p /run/php
 
