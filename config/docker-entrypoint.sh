@@ -2,7 +2,7 @@
 set -e
 
 # Set # of hard links to 1 to keep cron happy.
-touch /etc/cron.d/php5 /var/spool/cron/crontabs/www-data /etc/crontab
+touch /etc/cron.d/php7 /var/spool/cron/crontabs/www-data /etc/crontab
 
 # Function to update the fpm configuration to make the service environment variables available
 echo "[www]" > /etc/php/7.0/fpm/pool.d/environments.conf

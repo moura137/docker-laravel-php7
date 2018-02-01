@@ -1,15 +1,22 @@
 FROM debian:jessie
 
 #PACKAGES
-RUN apt-get update -y && apt-get install -y wget curl;
+RUN apt-get update -y && apt-get install -y \
+    wget \
+    curl \
+    vim \
+    cron \
+    supervisor \
+    locales;
 
 RUN echo deb http://packages.dotdeb.org jessie all >> /etc/apt/sources.list \
     && echo deb-src http://packages.dotdeb.org jessie all >> /etc/apt/sources.list \
     && wget https://www.dotdeb.org/dotdeb.gpg -q \
     && apt-key add dotdeb.gpg \
     && rm dotdeb.gpg \
-    && apt-get update -y \
-    && apt-get install -y \
+    && apt-get update -y;
+
+RUN apt-get install -y \
         php7.0 \
         php7.0-fpm \
         php7.0-mbstring \
@@ -23,20 +30,18 @@ RUN echo deb http://packages.dotdeb.org jessie all >> /etc/apt/sources.list \
         php7.0-mysql \
         php7.0-pgsql \
         php7.0-sqlite \
-        vim \
-        cron \
-        nginx \
-        supervisor \
-        locales \
-    && mkdir -p /var/log/supervisor \
-    && apt-get install -f -y \
+        php7.0-imagick \
+        nginx;
+
+RUN apt-get install -f -y \
     && apt-get upgrade -y \
     && apt-get --purge autoremove -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 # CONFIG LOCALE
-RUN mv /etc/locale.gen /etc/locale.gen.bkp \
+RUN mkdir -p /var/log/supervisor\
+    && mv /etc/locale.gen /etc/locale.gen.bkp \
     && echo "pt_BR UTF-8" > /etc/locale.gen \
     && echo "en_US UTF-8" >> /etc/locale.gen \
     && grep -qE "^pt_BR " /etc/locale.alias || echo "pt_BR pt_BR.UTF-8" >> /etc/locale.alias \
@@ -60,6 +65,7 @@ RUN curl -sS https://getcomposer.org/installer | php
 RUN mv composer.phar /usr/local/bin/composer
 
 # CONFIG NGINX
+RUN echo "fastcgi_pass unix:/run/php/php7.0-fpm.sock;\n\n$(cat /etc/nginx/snippets/fastcgi-php.conf)" > /etc/nginx/snippets/fastcgi-php.conf
 ADD config/laravel /etc/nginx/sites-available/laravel
 
 RUN sed -i "s/^\( *\)worker_connections \+[0-9]\+; *$/\1worker_connections 1024;/" /etc/nginx/nginx.conf
@@ -77,7 +83,7 @@ ADD ./config/crontab /var/spool/cron/crontabs/www-data
 RUN chown www-data.crontab /var/spool/cron/crontabs/www-data
 RUN chmod 0600 /var/spool/cron/crontabs/www-data
 
-# CONFIG SUPERVISOR    
+# CONFIG SUPERVISOR
 ADD config/supervisord.conf /etc/supervisord.conf
 ADD config/docker-entrypoint.sh /root/docker-entrypoint.sh
 RUN chmod +x /root/docker-entrypoint.sh
