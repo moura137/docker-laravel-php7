@@ -31,6 +31,8 @@ RUN apt-get install -y \
         php7.0-pgsql \
         php7.0-sqlite \
         php7.0-imagick \
+        php7.0-soap \
+        php7.0-zip \
         nginx;
 
 RUN apt-get install -f -y \
