@@ -10,6 +10,7 @@ RUN apt-get update && apt-get install -y \
         libmcrypt-dev \
         libxml2-dev \
         libmagickwand-dev \
+        libcurl4-gnutls-dev \
         g++ \
         wget \
         curl \
@@ -32,11 +33,27 @@ RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-di
     && docker-php-ext-enable bcmath \
     && docker-php-ext-install soap \
     && docker-php-ext-enable soap \
+    && docker-php-ext-install curl \
+    && docker-php-ext-enable curl \
     && pecl install imagick \
     && docker-php-ext-enable imagick
 
 RUN pecl install -o -f mcrypt-1.0.2 \
     && docker-php-ext-enable mcrypt
+
+RUN pecl install mongodb \
+    && docker-php-ext-enable mongodb
+
+RUN pecl install xdebug \
+    && docker-php-ext-enable xdebug
+
+RUN echo 'xdebug.default_enable=1' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+RUN echo 'xdebug.remote_enable=1' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+RUN echo 'xdebug.remote_port=9001' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+RUN echo 'xdebug.remote_connect_back=1' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+RUN echo 'xdebug.idekey=sublime.xdebug' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+RUN echo 'xdebug.remote_autostart=false' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+RUN echo 'xdebug.remote_log="/tmp/xdebug.log"' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 
 RUN apt-get install -f -y \
     && apt-get --purge autoremove -y;
