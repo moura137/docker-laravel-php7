@@ -16,6 +16,7 @@ RUN apt-get update && apt-get install -y \
         curl \
         vim \
         cron \
+        openssl \
         nginx \
         supervisor
 
@@ -34,8 +35,9 @@ RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-di
     && docker-php-ext-install soap \
     && docker-php-ext-enable soap \
     && docker-php-ext-install curl \
-    && docker-php-ext-enable curl \
-    && pecl install imagick \
+    && docker-php-ext-enable curl
+
+RUN pecl install imagick \
     && docker-php-ext-enable imagick
 
 RUN pecl install -o -f mcrypt-1.0.2 \
