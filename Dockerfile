@@ -1,4 +1,4 @@
-FROM php:7.3-fpm
+FROM php:7.4.15-fpm
 RUN apt-get update && apt-get install -y \
         libfreetype6-dev \
         libjpeg62-turbo-dev \
@@ -20,7 +20,7 @@ RUN apt-get update && apt-get install -y \
         nginx \
         supervisor
 
-RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
+RUN docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/ \
     && docker-php-ext-install -j$(nproc) gd \
     && docker-php-ext-install zip \
     && docker-php-ext-install pdo \
@@ -80,7 +80,7 @@ RUN mv composer.phar /usr/local/bin/composer
 # RUN sed -i "s/^ *variables_order *= *\"GPCS\" *$/variables_order = \"EGPCS\"/" /usr/local/etc/php-fpm.d/www.conf
 # RUN sed -i "s/^ *memory_limit *= *[0-9]\+M *$/memory_limit = 512M/" /usr/local/etc/php-fpm.d/www.conf
 # RUN sed -i "s/^ *post_max_size *= *[0-9]\+M *$/post_max_size = 50M/" /usr/local/etc/php-fpm.d/www.conf
-# RUN sed -Ei "s/^ *;?listen.mode *=.*$/listen.mode = 0664/" /etc/php/7.2/fpm/pool.d/www.conf
+# RUN sed -Ei "s/^ *;?listen.mode *=.*$/listen.mode = 0664/" /etc/php/7.4/fpm/pool.d/www.conf
 # RUN mkdir -p /run/php
 
 # CONFIG NGINX
